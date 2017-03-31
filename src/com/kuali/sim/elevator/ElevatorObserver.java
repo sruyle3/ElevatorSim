@@ -4,4 +4,10 @@ package com.kuali.sim.elevator;
  */
 public interface ElevatorObserver {
 
+	public void observeFloorChange(int elevatorId, int currentFloor);
+	
+	public void observeDoorOpen(int elevatorId);
+	
+	public void observeDoorClose(int elevatorId);
+	
 }
