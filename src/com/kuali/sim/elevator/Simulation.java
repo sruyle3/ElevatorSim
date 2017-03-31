@@ -16,7 +16,13 @@ public class Simulation {
 		
 	}
 	
-	public void requestElevator(int pickupFloor, int currentFloor) {
+	public void requestElevator(int targetFloor, int currentFloor) {
+		if (targetFloor > numFloors - 1 || targetFloor < 0 || currentFloor > numFloors - 1 || currentFloor < 0) {
+			throw new IllegalArgumentException("Invalid floor request " + targetFloor + " " + currentFloor);
+		}
+	}
+	
+	public void serviceElevator(int elevatorId) {
 		
 	}
 	
