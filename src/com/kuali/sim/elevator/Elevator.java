@@ -3,7 +3,7 @@ package com.kuali.sim.elevator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Elevator {
+public class Elevator implements Runnable {
 
 	enum ElevatorMode {
 		MAINTENANCE, OPERATIONAL;
@@ -12,13 +12,15 @@ public class Elevator {
 	private volatile boolean running;
 	
 	final int elevatorId; 
-	int numTrips = 0;
+	private int numTrips = 0;
 	// Let's label floors starting at zero like in Europe
-	int currentFloor = 0;
-	final int topFloor;
-	boolean hasPassenger = false;
-	boolean doorOpen = false;
-	ElevatorMode currentMode = ElevatorMode.OPERATIONAL;
+	// TODO: Make this a queue of stopFloors and targetFloors, not enough time
+	private int currentFloor = 0;
+	private int targetFloor = 0;
+	private final int topFloor;
+	private boolean hasPassenger = false;
+	private boolean doorOpen = false;
+	private ElevatorMode currentMode = ElevatorMode.OPERATIONAL;
 	
 	// Keep list of observers
 	List<ElevatorObserver> observers = new ArrayList<ElevatorObserver>();
@@ -57,6 +59,9 @@ public class Elevator {
 		if (targetFloor < 0) {
 			throw new IllegalArgumentException("Can't drill into the earth core!");
 		}
+		
+		// Keep this so can tell if moving up or down when have passenger
+		this.targetFloor = targetFloor;
 		
 		// Move up or down until reach target floor
 		boolean movingUp = (targetFloor > currentFloor);
@@ -147,6 +152,7 @@ public class Elevator {
 	// Fix the elevator back to operational status
 	public void serviceElevator() {
 		this.currentMode = ElevatorMode.OPERATIONAL;
+		this.numTrips = 0;
 	}
 	
 	// Simplifying assumption that have no requirement to stop observing
@@ -160,5 +166,13 @@ public class Elevator {
 	
 	public boolean isAvailable() {
 		return currentMode == ElevatorMode.OPERATIONAL && !hasPassenger;
+	}
+	
+	public int getTargetFloor() {
+		return this.targetFloor;
+	}
+	
+	public int getCurrentFloor() {
+		return this.currentFloor;
 	}
 }

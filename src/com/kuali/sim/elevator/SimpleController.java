@@ -27,12 +27,19 @@ public class SimpleController implements ElevatorController, ElevatorObserver {
 		
 		// Init elevators, fire as separate threads
 		this.numElevators = numElevators;
-		
-		
-		
-		// Register controller as observer
-		
-		// Add to map so can access later
+		for (int i=0; i<numElevators; i++) {
+			Elevator el = new Elevator(i, numFloors-1);
+			
+			// Add to map so can access later
+			this.elevatorsById.put(i, el);
+			
+			// Register as observer
+			el.addObserver(this);
+			
+			// Fire elevator off to running
+			// Assuming don't need threadpool for simplicities sake
+			new Thread(el).start();
+		}
 		
 	}
 	
@@ -51,8 +58,19 @@ public class SimpleController implements ElevatorController, ElevatorObserver {
 		}
 		
 		// Check if someone moving up or down with floor in between 
+		for (Elevator el : this.elevatorsById.values()) {
+			if (el.hasPassenger() && (targetFloor > currentFloor) && el.getCurrentFloor() < currentFloor && el.getTargetFloor() > targetFloor) {
+				// stop elevator on the way up
+			}
+			
+			if (el.hasPassenger() && (targetFloor < currentFloor) && el.getCurrentFloor() > currentFloor && el.getTargetFloor() < targetFloor) {
+				// stop elevator on the down
+			}
+		}
 		
-		// Otherwise sort through to find closest, should be able to sort on absolute difference between Elevator.currentFloor and requestFloor		
+		// Otherwise sort through to find closest
+		// should be able to sort on absolute difference between Elevator.currentFloor and requestFloor		
+		// TODO: Implement the sorting and fetching closest
 	}
 
 	
@@ -62,7 +80,8 @@ public class SimpleController implements ElevatorController, ElevatorObserver {
 		// Validate elevatorId
 		
 		// Call into service the elevator
-		
+		Elevator el = this.elevatorsById.get(elevatorId);
+		el.serviceElevator();
 	}
 	
 	@Override
@@ -84,9 +103,8 @@ public class SimpleController implements ElevatorController, ElevatorObserver {
 	}
 
 
-	//
 	public void haltElevators() {
-		
+		// Iterate all elevators killing all threads
 	}
 	
 	
