@@ -9,6 +9,8 @@ public class Elevator {
 		MAINTENANCE, OPERATIONAL;
 	}
 	
+	private volatile boolean running;
+	
 	final int elevatorId; 
 	int numTrips = 0;
 	// Let's label floors starting at zero like in Europe
@@ -29,6 +31,23 @@ public class Elevator {
 		this.elevatorId = id;
 		this.topFloor = topFloor;
 	}
+	
+	// Each elevator instance should run in separate threads from each other
+    public void run() {
+        running = true;
+        while(running) {
+        	// No work to do here, just run until interrupted or get stopRunning()
+        	// Account for interruption
+            if (Thread.interrupted()) {
+                return;
+            }
+        }
+    }
+
+    // Don't anticipate this would get run until the end of the sim
+    public void killElevatorThread() {
+        running = false;
+    }
 	
 	public void move(int targetFloor) {
 		if (targetFloor > topFloor) {

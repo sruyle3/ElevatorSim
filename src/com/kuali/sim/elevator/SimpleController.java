@@ -3,29 +3,65 @@ package com.kuali.sim.elevator;
 import java.util.HashMap;
 import java.util.Map;
 
+/** 
+ * SimpleController implementation of ElevatorController to handle requests from the sim
+ * @author Ruyle
+ *
+ */
 public class SimpleController implements ElevatorController, ElevatorObserver {
 	Map<Integer, Elevator> elevatorsById = new HashMap<Integer, Elevator>();
-	
+	private int numFloors;
+	private int numElevators;
+			
 	public SimpleController() {
+		
+	}
+	
+	public void initController(int numFloors, int numElevators) {
+		// Required to be able to initialize with at least 1 floor
+		if (numFloors < 1) {
+			throw new IllegalArgumentException("Must be at least 1 floor");
+		} else {
+			this.numFloors = numFloors;
+		}
+		
 		// Init elevators, fire as separate threads
+		this.numElevators = numElevators;
+		
+		
 		
 		// Register controller as observer
 		
-		// Add to map 
-
-	}
-	
-
-
-	@Override
-	public void requestElevator(int targetFloor, int currentFloor) {
-		// TODO Auto-generated method stub
+		// Add to map so can access later
 		
 	}
+	
+	public void haltController() {
+		// Kill all running threads
+		for (Elevator elevator : elevatorsById.values()) {
+			elevator.killElevatorThread();
+		}
+	}
+	
+	@Override
+	public void requestElevator(int targetFloor, int currentFloor) {
+		// Validate floors
+		if (targetFloor > numFloors - 1 || targetFloor < 0 || currentFloor > numFloors - 1 || currentFloor < 0) {
+			throw new IllegalArgumentException("Invalid floor request " + targetFloor + " " + currentFloor);
+		}
+		
+		// Check if someone moving up or down with floor in between 
+		
+		// Otherwise sort through to find closest, should be able to sort on absolute difference between Elevator.currentFloor and requestFloor		
+	}
 
+	
+	
 	@Override
 	public void serviceElevator(int elevatorId) {
-		// TODO Auto-generated method stub
+		// Validate elevatorId
+		
+		// Call into service the elevator
 		
 	}
 	
@@ -48,6 +84,10 @@ public class SimpleController implements ElevatorController, ElevatorObserver {
 	}
 
 
+	//
+	public void haltElevators() {
+		
+	}
 	
 	
 }
